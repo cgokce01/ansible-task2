@@ -1,0 +1,43 @@
+- hosts: all
+  tasks: 
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  - name: Install the latest version of Apache
+    yum:
+      name: httpd
+      state: latest
+  - name: Make sure a service is running
+    systemd:
+      state: started
+      enabled: yes 
+      name: httpd
+
+  - name: Download foo.conf
+    get_url:
+      url: https://www.free-css.com/assets/files/free-css-templates/download/page294/rent4u.zip
+      dest: /tmp/
+      mode: '0440'
+
+  - name: Install Unzip
+    yum:
+      name: unzip
+      state: latest
+
+  - name: Unarchive a file that is already on the remote machine
+    unarchive:
+      src: /tmp/rent4u.zip
+      dest: /var/www/html
+      remote_src: yes
+  - name: Move Template Files 
+    shell: mv /var/www/html/rent4u-html/* /var/www/html/ 
+    args:
+      creates: /var/www/html/index.html
+
+  - name: Recursively change ownership of a directory
+    file:
+      path: /var/www/html
+      state: directory
+      recurse: yes
+      owner: apache
+      group: apache

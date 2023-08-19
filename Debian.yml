@@ -1,0 +1,35 @@
+- hosts: all
+  tasks:
+  - name: Install Apache on Debian
+    apt:
+      name: apache2
+      update_cache: yes
+      state: present
+
+  - name: Make sure a service is running
+    systemd:
+      state: started
+      enabled: yes 
+      name: apache2
+
+  - name: Download foo.conf
+    get_url:
+      url: https://www.free-css.com/assets/files/free-css-templates/download/page294/rent4u.zip
+      dest: /tmp/
+
+  - name: Install Unzip
+    apt:
+      name: unzip
+      update_cache: yes
+      state: present 
+
+  - name: Unarchive tempate on Debian
+    unarchive:
+      src: /tmp/rent4u.zip
+      dest: /var/www/html
+      remote_src: yes
+    
+  - name: Move Template Files on Debian
+    shell: mv /var/www/html/rent4u-html/* /var/www/html/ 
+    args:
+      creates: /var/www/html/about.html
